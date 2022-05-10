@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap CSS (jsDelivr CDN) -->
+    <!-- Bootstrap CSS (Cloudflare CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/css/bootstrap.min.css" integrity="sha512-T584yQ/tdRR5QwOpfvDfVQUidzfgc2339Lc8uBDtcp/wYu80d7jwBgAxbyMh0a9YM9F8N3tdErpFI8iaGx6x5g==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <!-- jQuery (Cloudflare CDN) -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Bootstrap Bundle JS (Cloudflare CDN) -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/js/bootstrap.min.js" integrity="sha512-UR25UO94eTnCVwjbXozyeVd6ZqpaAE9naiEUBK/A+QDbfSTQFhPGj5lOR6d8tsgbBk84Ggb5A3EkjsOgPRPcKA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+    <title>Home</title>
+</head>
+<body>
+
+    <!-- Поиск данных и сортировка таблицы -->
+<div class="container">
+    <div class="row ">  
+        
+            <div class="col md-3">
+                <h4 >Все ссылки из сайта новосей <a href="https://news.mail.ru/">https://news.mail.ru/</a>
+            </div>
+            <div class="col md-3">
+                <form action="{% url 'home' %}" >
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Введите ID для поиска записи</label>
+                    <input class="form-control" type="search" name="search" style="width:200px ;">
+                    </div>
+                    <button type="submit" class="btn btn-outline-dark" >Подтвердить</button>
+                </form>
+            </div>
+            <div class="col md-3">
+                <h4> Фильтрации</h4>
+                <form action="{% url 'home' %}">
+                    Фильтрация по URL <input type="submit" class="btn btn-outline-dark"  value="url" name="url"> 
+                </form>
+                <form class="mt-2" action="{% url 'home' %}">
+                    Фильтрация по ID <input type="submit" class="btn btn-outline-dark" value="id" name="id">
+                </form> 
+            </div>
+
+            <div class="col md-3">
+                <form action="{% url 'home' %}" method="post"> {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-dark" value="obnovlenie" name="obnovlenie" >Обновить данные</button>
+                </form>
+            </div>
+    </div> 
+</div>
+
+<!-- Вывод таблицы на экран -->
+    <table class="table table-hover table-sm mt-3" >
+        <thead class="thead-dark ">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">URL</th>
+                <th scope="col">Domain</th>
+                <th scope="col">create_date</th>
+                <th scope="col">update_date</th>
+                <th scope="col">country</th>
+                <th scope="col">isDead</th>
+                <th scope="col">A</th>
+                <th scope="col">NS</th>
+                <th scope="col">CNAME</th>
+                <th scope="col">MX</th>
+                <th scope="col">TXT</th>
+              </tr>
+        </thead>
+        <tbody style="font-size: 8px;">
+    {% for strok in users %}
+    <tr>
+        <td>{{ strok.id }}</td>
+        <td> <a href="{{strok.url}}">{{ strok.url }} </a></td>
+        <td>{{ strok.domain }}</td>
+        <td>{{ strok.create_date }}</td>
+        <td>{{ strok.update_date }}</td>
+        <td>{{ strok.country }}</td>
+        <td>{{ strok.isDead }}</td>
+        <td>{{ strok.A }}</td>
+        <td>{{ strok.NS }}</td>
+        <td>{{ strok.CNAME }}</td>
+        <td>{{ strok.MX }}</td>
+        <td>{{ strok.TXT }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<!-- Пагинация таблицы -->
+{% if users.has_other_pages %}
+  <ul class="pagination" style="justify-content: center; font-size:18px">
+    {% if users.has_previous %}
+      <li><a href="?page={{ users.previous_page_number }}" >&laquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&laquo;</span></li>
+    {% endif %}
+    {% for i in users.paginator.page_range %}
+      {% if users.number == i %}
+        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+      {% else %}
+        <li><a href="?page={{ i }}">{{ i }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if users.has_next %}
+      <li><a href="?page={{ users.next_page_number }}">&raquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&raquo;</span></li>
+    {% endif %}
+  </ul>
+{% endif %}
+
+</body>
+</html>
